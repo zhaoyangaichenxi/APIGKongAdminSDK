@@ -1,0 +1,5 @@
+kong:
+  adminurl: http://10.221.129.134:8001/config
+  templateurl: kong_template.yml
+  kongurl: kong.yml
+  kongrealurl: kongreal.yml
