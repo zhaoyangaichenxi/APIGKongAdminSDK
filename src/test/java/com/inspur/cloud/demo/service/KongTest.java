@@ -1,6 +1,7 @@
 package com.inspur.cloud.demo.service;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,28 +25,35 @@ public class KongTest {
 
 	@Test
 	public void sendHttp() throws Exception {
+		long currentTimeMillis = System.currentTimeMillis();
+		String name = String.valueOf(currentTimeMillis);
+		Thread.sleep(10);
+		long currentTimeMillis1 = System.currentTimeMillis();
+		String name1 = String.valueOf(currentTimeMillis1);
+		System.out.println(name);
+		System.out.println(name1);
 		ArrayList<ServiceApi> serverlist = new ArrayList<ServiceApi>();
     	ServiceApi server = new ServiceApi();
-    	server.setName("mytest");
+    	server.setName(name);
     	server.setUrl("http://example.com");
     	ServiceApi server1 = new ServiceApi();
-    	server1.setName("mytest1");
+    	server1.setName(name1);
     	server1.setUrl("http://example.com");
     	serverlist.add(server);
     	serverlist.add(server1);
     	ArrayList<Route> routeList = new ArrayList<Route>();
     	Route route = new Route();
-    	route.setName("myroute");
+    	route.setName(name);
     	ArrayList<String> list = new ArrayList<String>();
     	list.add("/demo1");
     	route.setPaths(list);
-    	route.setService("mytest");
+    	route.setService(name);
     	Route route1 = new Route();
-    	route1.setName("myroute1");
+    	route1.setName(name1);
     	ArrayList<String> list1 = new ArrayList<String>();
     	list1.add("/demo2");
     	route1.setPaths(list1);
-    	route1.setService("mytest1");
+    	route1.setService(name1);
     	routeList.add(route);
     	routeList.add(route1);
 		boolean createApi = kongAdminUtil.createApi(serverlist, routeList, "10.221.129.134");
