@@ -22,6 +22,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.inspur.cloud.admin.entity.Plugin;
 import com.inspur.cloud.admin.entity.Route;
 import com.inspur.cloud.admin.entity.ServiceApi;
 import com.inspur.cloud.admin.entity.YamlRules;
@@ -46,10 +47,10 @@ public class KongAdminUtil {
 	
 	
 	@SuppressWarnings("unchecked")
-	public boolean createApi(ArrayList<ServiceApi> serverlist,ArrayList<Route> routeList,String clusterIp) throws Exception {
-		String beanToYaml = beanToYaml(serverlist, routeList);
+	public boolean createApi(ArrayList<ServiceApi> serverlist,ArrayList<Route> routeList,ArrayList<Plugin> pluginList,String clusterIp) throws Exception {
+		String beanToYaml = beanToYaml(serverlist, routeList,pluginList,clusterIp);
 		try {
-			clusterIp = "http://"+clusterIp+":8001/config";
+			clusterIp = "http://"+clusterIp+"/config";
 			HttpClientUtil.sendHttpPostJson(clusterIp, beanToYaml);
 			return true;
 		} catch (Exception e) {
@@ -59,22 +60,26 @@ public class KongAdminUtil {
 	
 	}
 	
-	public String beanToYaml(ArrayList<ServiceApi> serverlist,ArrayList<Route> routeList)throws Exception{
+	public String beanToYaml(ArrayList<ServiceApi> serverlist,ArrayList<Route> routeList,ArrayList<Plugin> pluginList,String clusterIp)throws Exception{
 		Yaml yaml = new Yaml();
 		YamlRules rule = new YamlRules();
 		rule.setServices(serverlist);
 		rule.setRoutes(routeList);
-		File source = new File(templateurl);
-		File dest = new File(kongurl);
-		copyFileUsingFileStreams(source, dest);
-		FileWriter fileWriter = new FileWriter(kongurl,true);
+		if(pluginList!=null) {		
+			rule.setPlugins(pluginList);
+		}
+		InputStream in = getClass().getResourceAsStream(templateurl);
+		File dest = new File(kongurl+clusterIp+".yml");
+		copyFileUsingFileStreams(in, dest);
+		FileWriter fileWriter = new FileWriter(kongurl+clusterIp+".yml",true);
 		yaml.dump(rule,fileWriter);
-		deleteLine(kongurl);
+		fileWriter.close();
+		deleteLine(kongurl+clusterIp+".yml",clusterIp);
 		String header = "config: |\n";
-		appendFileHeader(header.getBytes(), kongrealurl);
-		String yamlToJson = YamlToJson(kongrealurl);
-		deleteFile(kongurl);
-		deleteFile(kongrealurl);
+		appendFileHeader(header.getBytes(), kongrealurl+clusterIp+".yml");
+		String yamlToJson = YamlToJson(kongrealurl+clusterIp+".yml");
+		deleteFile(kongurl+clusterIp+".yml");
+		deleteFile(kongrealurl+clusterIp+".yml");
 		return yamlToJson;
 	}
 	
@@ -86,6 +91,7 @@ public class KongAdminUtil {
 		loaded = (Map<String, Object>) yaml.load(fis);
 		logger.info(gs.toJson(loaded));
 		String paramsJson = gs.toJson(loaded);
+		fis.close();
 		return paramsJson;
 	}
 	
@@ -100,12 +106,11 @@ public class KongAdminUtil {
 	    return flag;  
 	}  
 	
-	private  void copyFileUsingFileStreams(File source, File dest)
-	        throws IOException {    
-	    InputStream input = null;    
+	private  void copyFileUsingFileStreams(InputStream input, File dest)
+	        throws IOException {      
 	    OutputStream output = null;    
 	    try {
-	           input = new FileInputStream(source);
+	           //input = new FileInputStream(source);
 	           output = new FileOutputStream(dest);        
 	           byte[] buf = new byte[1024];        
 	           int bytesRead;        
@@ -132,9 +137,9 @@ public class KongAdminUtil {
 
 
 	
-	private void deleteLine(String dest) throws Exception{
+	private void deleteLine(String dest,String clusterIp) throws Exception{
 		File inFile = new File(dest);
-        File outFile = new File(kongrealurl);
+        File outFile = new File(kongrealurl+clusterIp+".yml");
 
         BufferedReader br = null;
         String readedLine;
@@ -158,6 +163,7 @@ public class KongAdminUtil {
                 }
             }
             bw.flush();
+            fw.close();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
