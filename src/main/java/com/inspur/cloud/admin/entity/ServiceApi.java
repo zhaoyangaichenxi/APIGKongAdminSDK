@@ -14,4 +14,7 @@ public class ServiceApi {
 	@SerializedName("url")
 	private String url;
 	
+	@SerializedName("connect_timeout")
+	private Long connect_timeout;
+	
 }

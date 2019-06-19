@@ -48,7 +48,8 @@ public class KongAdminUtil {
 	
 	@SuppressWarnings("unchecked")
 	public boolean createApi(ArrayList<ServiceApi> serverlist,ArrayList<Route> routeList,ArrayList<Plugin> pluginList,String clusterIp) throws Exception {
-		String beanToYaml = beanToYaml(serverlist, routeList,pluginList,clusterIp);
+		String kongName = clusterIp.replace(":", "");
+		String beanToYaml = beanToYaml(serverlist, routeList,pluginList,kongName);
 		try {
 			clusterIp = "http://"+clusterIp+"/config";
 			HttpClientUtil.sendHttpPostJson(clusterIp, beanToYaml);
@@ -78,8 +79,8 @@ public class KongAdminUtil {
 		String header = "config: |\n";
 		appendFileHeader(header.getBytes(), kongrealurl+clusterIp+".yml");
 		String yamlToJson = YamlToJson(kongrealurl+clusterIp+".yml");
-		deleteFile(kongurl+clusterIp+".yml");
-		deleteFile(kongrealurl+clusterIp+".yml");
+		//deleteFile(kongurl+clusterIp+".yml");
+		//deleteFile(kongrealurl+clusterIp+".yml");
 		return yamlToJson;
 	}
 	
@@ -152,8 +153,16 @@ public class KongAdminUtil {
             }
             br = new BufferedReader(new FileReader(inFile));
             int idx = 0;
+            //此处要去掉yaml中的注释，否则转换会出现问题
             while ((readedLine = br.readLine()) != null) {
-                if (readedLine.contains("!!")) {
+            	if(readedLine.contains("- config: !!com.inspur.cloud.admin.entity.FirstConfig")) {
+            		bw.write("  "+readedLine.replaceAll("- config: !!com.inspur.cloud.admin.entity.FirstConfig", "- config:")+"\r\n");
+            		readedLine = br.readLine();
+            	}else if(readedLine.contains("- config: !!com.inspur.cloud.admin.entity.SecondConfig")) {
+            		bw.write("  "+readedLine.replaceAll("- config: !!com.inspur.cloud.admin.entity.SecondConfig","- config:")+"\r\n");
+            		readedLine = br.readLine();
+            	}
+            	else if (readedLine.contains("!!")) {
                     continue;
                 }
                 bw.write("  "+readedLine + "\n");

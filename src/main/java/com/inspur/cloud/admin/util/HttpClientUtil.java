@@ -11,6 +11,8 @@ import java.util.Map;
 
 import javax.management.RuntimeErrorException;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -125,7 +127,8 @@ public class HttpClientUtil {
 
 	public static String sendHttpPostJson(String httpUrl, String paramsJson) throws Exception {
 		HttpPost httpPost = new HttpPost(httpUrl);// 创建httpPost
-
+		String encoding = new String(Base64.encodeBase64(StringUtils.getBytesUtf8("user1:apig")));
+		httpPost.addHeader("Authorization", "Basic " + encoding);
 		// 设置参数
 		if (paramsJson != null && paramsJson.trim().length() > 0) {
 			StringEntity stringEntity = new StringEntity(paramsJson, "UTF-8");

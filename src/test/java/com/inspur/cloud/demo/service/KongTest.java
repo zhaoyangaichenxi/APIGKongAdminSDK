@@ -1,9 +1,6 @@
 package com.inspur.cloud.demo.service;
 
 import java.util.ArrayList;
-import java.util.UUID;
-
-import javax.swing.RepaintManager;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,9 +10,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.inspur.cloud.admin.KongApplication;
-import com.inspur.cloud.admin.entity.Config;
+import com.inspur.cloud.admin.entity.FirstConfig;
 import com.inspur.cloud.admin.entity.Plugin;
 import com.inspur.cloud.admin.entity.Route;
+import com.inspur.cloud.admin.entity.SecondConfig;
 import com.inspur.cloud.admin.entity.ServiceApi;
 import com.inspur.cloud.admin.util.KongAdminUtil;
 
@@ -37,98 +35,124 @@ public class KongTest {
 		System.out.println(name);
 		System.out.println(name1);
 		ArrayList<ServiceApi> serverlist = new ArrayList<ServiceApi>();
-    	ServiceApi server = new ServiceApi();
-    	server.setName(name);
-    	server.setUrl("http://www.example.com");
-    	ServiceApi server1 = new ServiceApi();
-    	server1.setName(name1);
-    	server1.setUrl("http://www.baidu.com");
-    	serverlist.add(server);
-    	serverlist.add(server1);
-    	ArrayList<Route> routeList = new ArrayList<Route>();
-    	Route route = new Route();
-    	route.setName(name);
-    	ArrayList<String> list = new ArrayList<String>();
-    	list.add("/qw");
-    	route.setPaths(list);
-    	route.setService(name);
-    	Route route1 = new Route();
-    	route1.setName(name1);
-    	ArrayList<String> list1 = new ArrayList<String>();
-    	list1.add("/qwer");
-    	route1.setPaths(list1);
-    	route1.setService(name1);
-    	routeList.add(route);
-    	routeList.add(route1);
-    	ArrayList<Plugin> pluginList = new ArrayList<Plugin>();
-    	Plugin plugin = new Plugin();
-    	plugin.setName("plugin");
-    	plugin.setRoute(name);
-    	Config config = new Config();
-    	config.setHttpMethod("POST");
-    	config.setBackendContentType("application/json");
-    	config.setRequestPath("/myroute/userid/abc/678/commentid");
-		config.setBackendPath("http://mockbin.org");
-    	ArrayList<String> pathParams = new ArrayList<String>();
-    	pathParams.add("userid");
-    	pathParams.add("commentid");
-		config.setPathParams(pathParams);
-		ArrayList<String> replace = new ArrayList<String>();
-		replace.add("path:userid;body:msg.testid1");
-		replace.add("path:commentid;body:msg.testid2.testid3");
-		config.setReplace(replace);
-		ArrayList<String> add = new ArrayList<String>();
-		add.add("head:testkey2:333");
-		add.add("query:testkey3:555");
-		config.setAdd(add);
-		plugin.setConfig(config);
-		pluginList.add(plugin);
-		boolean createApi = kongAdminUtil.createApi(serverlist, routeList, pluginList,"10.110.25.114:32226");
+		ServiceApi server = new ServiceApi();
+		server.setName(name);
+		server.setConnect_timeout(30000L);
+		server.setUrl("http://www.example.com");
+		ServiceApi server1 = new ServiceApi();
+		server1.setName(name1);
+		server1.setConnect_timeout(30000L);
+		server1.setUrl("http://www.baidu.com");
+		serverlist.add(server);
+		serverlist.add(server1);
+		ArrayList<Route> routeList = new ArrayList<Route>();
+		Route route = new Route();
+		route.setName(name);
+		ArrayList<String> list = new ArrayList<String>();
+		list.add("/err");
+		route.setPaths(list);
+		route.setService(name);
+		Route route1 = new Route();
+		route1.setName(name1);
+		ArrayList<String> list1 = new ArrayList<String>();
+		list1.add("/crr");
+		route1.setPaths(list1);
+		route1.setService(name1);
+		routeList.add(route);
+		routeList.add(route1);
+		/*
+		 * ArrayList<Plugin> pluginList = new ArrayList<Plugin>(); Plugin plugin = new
+		 * Plugin(); plugin.setName("plugin"); plugin.setRoute(name); Config config =
+		 * new Config(); config.setHttpMethod("POST");
+		 * config.setBackendContentType("application/json");
+		 * config.setRequestPath("/myroute/userid/abc/678/commentid");
+		 * config.setBackendPath("http://mockbin.org"); ArrayList<String> pathParams =
+		 * new ArrayList<String>(); pathParams.add("userid");
+		 * pathParams.add("commentid"); config.setPathParams(pathParams);
+		 * ArrayList<String> replace = new ArrayList<String>();
+		 * replace.add("path:userid;body:msg.testid1");
+		 * replace.add("path:commentid;body:msg.testid2.testid3");
+		 * config.setReplace(replace); ArrayList<String> add = new ArrayList<String>();
+		 * add.add("head:testkey2:333"); add.add("query:testkey3:555");
+		 * config.setAdd(add); plugin.setConfig(config); pluginList.add(plugin);
+		 */
+		ArrayList<Plugin> pluginList = new ArrayList<Plugin>();
+		
+		  Plugin plugin = new Plugin(); plugin.setName("plugin");
+		  plugin.setRoute("myroute"); FirstConfig config = new FirstConfig();
+		 config.setHttpMethod("POST");
+		  config.setBackendContentType("application/json");
+		  config.setRequestPath("/myroute/userid/abc/678/commentid");
+		  config.setBackendPath("http://mockbin.org"); ArrayList<String> pathParams =
+		  new ArrayList<String>(); pathParams.add("userid");
+		  pathParams.add("commentid"); config.setPathParams(pathParams);
+		  ArrayList<String> replace = new ArrayList<String>();
+		  replace.add("path:userid;body:msg.testid1");
+		  replace.add("path:commentid;body:msg.testid2.testid3");
+		  config.setReplace(replace); ArrayList<String> add = new ArrayList<String>();
+		  add.add("head:testkey2:333"); add.add("query:testkey3:555");
+		  config.setAdd(add); plugin.setConfig(config);
+		  Plugin plugin1 = new Plugin();
+		  plugin1.setName("plugin1");
+		  plugin1.setRoute("myroute"); 
+		  SecondConfig sc = new SecondConfig();
+		  sc.setHttpMethod("POST");
+		  
+		  sc.setIamEndpoint("http://service.inspurtest.com");
+		  sc.setTimeout(1000L);
+		  plugin1.setConfig(sc);
+		  pluginList.add(plugin);
+		  pluginList.add(plugin1);
+		boolean createApi = kongAdminUtil.createApi(serverlist, routeList, pluginList, "10.110.25.114:32171");
 		System.out.println(createApi);
 	}
 
 	@Test
 	public void toKongXml() throws Exception {
 		ArrayList<ServiceApi> serverlist = new ArrayList<ServiceApi>();
-    	ServiceApi server = new ServiceApi();
-    	server.setName("mytest");
-    	server.setUrl("http://example.com");
-    	serverlist.add(server);
-    	ArrayList<Route> routeList = new ArrayList<Route>();
-    	Route route = new Route();
-    	route.setName("myroute");
-    	ArrayList<String> list = new ArrayList<String>();
-    	list.add("/test");
-    	route.setPaths(list);
-    	route.setService("mytest");
-    	routeList.add(route);
-    	ArrayList<Plugin> pluginList = new ArrayList<Plugin>();
-    	Plugin plugin = new Plugin();
-    	plugin.setName("plugin");
-    	plugin.setRoute("myroute");
-    	Config config = new Config();
-    	config.setHttpMethod("POST");
-    	config.setBackendContentType("application/json");
-    	config.setRequestPath("/myroute/userid/abc/678/commentid");
-		config.setBackendPath("http://mockbin.org");
-    	ArrayList<String> pathParams = new ArrayList<String>();
-    	pathParams.add("userid");
-    	pathParams.add("commentid");
-		config.setPathParams(pathParams);
-		ArrayList<String> replace = new ArrayList<String>();
-		replace.add("path:userid;body:msg.testid1");
-		replace.add("path:commentid;body:msg.testid2.testid3");
-		config.setReplace(replace);
-		ArrayList<String> add = new ArrayList<String>();
-		add.add("head:testkey2:333");
-		add.add("query:testkey3:555");
-		config.setAdd(add);
-		plugin.setConfig(config);
-		pluginList.add(plugin);
-    	String beanToYaml = kongAdminUtil.beanToYaml(serverlist, routeList,pluginList,"10.212.121.33");
-    	System.out.println(beanToYaml);
+		ServiceApi server = new ServiceApi();
+		server.setName("mytest");
+		server.setUrl("http://example.com");
+		serverlist.add(server);
+		ArrayList<Route> routeList = new ArrayList<Route>();
+		Route route = new Route();
+		route.setName("myroute");
+		ArrayList<String> list = new ArrayList<String>();
+		list.add("/test");
+		route.setPaths(list);
+		route.setService("mytest");
+		routeList.add(route);
+		ArrayList<Plugin> pluginList = new ArrayList<Plugin>();
+		
+		  Plugin plugin = new Plugin(); plugin.setName("plugin");
+		  plugin.setRoute("myroute"); FirstConfig config = new FirstConfig();
+		 config.setHttpMethod("POST");
+		  config.setBackendContentType("application/json");
+		  config.setRequestPath("/myroute/userid/abc/678/commentid");
+		  config.setBackendPath("http://mockbin.org"); ArrayList<String> pathParams =
+		  new ArrayList<String>(); pathParams.add("userid");
+		  pathParams.add("commentid"); config.setPathParams(pathParams);
+		  ArrayList<String> replace = new ArrayList<String>();
+		  replace.add("path:userid;body:msg.testid1");
+		  replace.add("path:commentid;body:msg.testid2.testid3");
+		  config.setReplace(replace); ArrayList<String> add = new ArrayList<String>();
+		  add.add("head:testkey2:333"); add.add("query:testkey3:555");
+		  config.setAdd(add); plugin.setConfig(config);
+		  Plugin plugin1 = new Plugin();
+		  plugin1.setName("plugin1");
+		  plugin1.setRoute("myroute"); 
+		  SecondConfig sc = new SecondConfig();
+		  sc.setHttpMethod("POST");
+		  
+		  sc.setIamEndpoint("http://service.inspurtest.com");
+		  sc.setTimeout(1000L);
+		  plugin1.setConfig(sc);
+		  pluginList.add(plugin);
+		  pluginList.add(plugin1);
+		String beanToYaml = kongAdminUtil.beanToYaml(serverlist, routeList, pluginList, "10.221.129.134");
+		System.out.println(beanToYaml);
 	}
-	
+
 	@Test
 	public void deleteFile() {
 		kongAdminUtil.deleteFile("kong.yml");
