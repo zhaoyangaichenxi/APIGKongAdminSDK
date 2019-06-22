@@ -45,6 +45,12 @@ public class KongAdminUtil {
 	@Value("${kong.kongrealurl}")
 	private String kongrealurl;
 	
+	@Value("${kong.username}")
+	private String username;
+	
+	@Value("${kong.password}")
+	private String password;
+	
 	
 	@SuppressWarnings("unchecked")
 	public boolean createApi(ArrayList<ServiceApi> serverlist,ArrayList<Route> routeList,ArrayList<Plugin> pluginList,String clusterIp) throws Exception {
@@ -52,7 +58,7 @@ public class KongAdminUtil {
 		String beanToYaml = beanToYaml(serverlist, routeList,pluginList,kongName);
 		try {
 			clusterIp = "http://"+clusterIp+"/config";
-			HttpClientUtil.sendHttpPostJson(clusterIp, beanToYaml);
+			HttpClientUtil.sendHttpPostJson(clusterIp, beanToYaml,username,password);
 			return true;
 		} catch (Exception e) {
 			logger.error("msg", e);

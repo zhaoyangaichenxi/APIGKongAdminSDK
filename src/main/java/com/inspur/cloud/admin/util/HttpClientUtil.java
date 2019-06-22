@@ -125,9 +125,9 @@ public class HttpClientUtil {
 
 
 
-	public static String sendHttpPostJson(String httpUrl, String paramsJson) throws Exception {
+	public static String sendHttpPostJson(String httpUrl, String paramsJson,String username,String password) throws Exception {
 		HttpPost httpPost = new HttpPost(httpUrl);// 创建httpPost
-		String encoding = new String(Base64.encodeBase64(StringUtils.getBytesUtf8("user1:apig")));
+		String encoding = new String(Base64.encodeBase64(StringUtils.getBytesUtf8(username+":"+password)));
 		httpPost.addHeader("Authorization", "Basic " + encoding);
 		// 设置参数
 		if (paramsJson != null && paramsJson.trim().length() > 0) {

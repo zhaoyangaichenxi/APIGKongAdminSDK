@@ -1,4 +1,6 @@
 kong:
+  username: user1
+  password: apig
   templateurl: /kong_template.yml
   kongurl: kong
   kongrealurl: kongreal
