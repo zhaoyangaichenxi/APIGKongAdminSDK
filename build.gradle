@@ -3,13 +3,7 @@ buildscript {
 		springBootVersion = '2.0.5.RELEASE'
 	}
 	repositories {
-		maven {
-			credentials {
-				username = repoUsername
-				password = repoPassword
-			}
-			url "$repoRoot$repoDev"
-		}
+		
 	}
 	dependencies {
 		//classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
